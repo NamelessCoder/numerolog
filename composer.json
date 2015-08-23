@@ -3,9 +3,17 @@
     "require": {
         "ext-pdo_sqlite": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
     "autoload": {
         "psr-4": {
             "NamelessCoder\\Numerolog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NamelessCoder\\Numerolog\\Tests\\": "tests/"
         }
     },
     "bin": [
