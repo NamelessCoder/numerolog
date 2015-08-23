@@ -4,7 +4,7 @@
         "ext-pdo_sqlite": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "@stable"
     },
     "autoload": {
         "psr-4": {
