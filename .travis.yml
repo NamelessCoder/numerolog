@@ -13,6 +13,10 @@ matrix:
     - php: "7"
     - php: "hhvm"
 
+before_install: composer self-update
+
 install: composer install
 
-script: phpunit
+script: ./vendor/bin/phpunit
+
+after_script: ./vendor/bin/coveralls
