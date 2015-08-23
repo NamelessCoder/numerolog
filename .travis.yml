@@ -17,6 +17,6 @@ before_install: composer self-update
 
 install: composer install
 
-script: ./vendor/bin/phpunit
+script: ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
 
 after_script: ./vendor/bin/coveralls
