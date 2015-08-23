@@ -98,32 +98,32 @@ commands that should immediately make sense to you:
 
 ```bash
 # increment "mycounter" by 10
-./vendor/bin/numerolog record --package myvendor/mypackage \
+./vendor/bin/numerolog --action save --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter mycounter --value +10
 
 # record a new temperature measurement
-./vendor/bin/numerolog record --package myvendor/mypackage \
+./vendor/bin/numerolog --action save --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --value 31.5
 
 # get the most recent recorded temperature
-./vendor/bin/numerolog get --package myvendor/mypackage \
+./vendor/bin/numerolog --action get --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature
 
 # get the twenty most recent recorded temperatures
-./vendor/bin/numerolog get --package myvendor/mypackage \
+./vendor/bin/numerolog --action save --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --count 20
 
 # get January's recorded temperatures
-./vendor/bin/numerolog get --package myvendor/mypackage \
+./vendor/bin/numerolog --action get --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --from 2015-01-01 --to 2015-01-31
 
 # get temperatures recorded from January up to today
-./vendor/bin/numerolog get --package myvendor/mypackage \
+./vendor/bin/numerolog --action get --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --from 2015-01-01
 ```
@@ -138,7 +138,7 @@ look like this instead:
 ```bash
 # passing the "token" as ENV variable; read package from composer.json
 NUMEROLOG_TOKEN="1234567890abcdefg1234567890abcdefg" ./vendor/bin/numerolog \
-    get --counter mycounter --count 10
+    --action get --counter mycounter --count 10
 ```
 
 The second mode of operation is directly via PHP:
@@ -147,7 +147,7 @@ The second mode of operation is directly via PHP:
 $client = new \NamelessCoder\Numerolog\Client();
 $client->get($package, $counter, $count = 1);
 $client->getRange($package, $counter, $from, $to = NULL);
-$client->record($package, $counter, 3.14);
+$client->save($package, $counter, 3.14);
 ```
 
 Security
