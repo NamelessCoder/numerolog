@@ -138,10 +138,10 @@ class Query {
 	}
 
 	/**
-	 * @return NULL|string
+	 * @return integer|NULL
 	 */
 	public function getFrom() {
-		return $this->from;
+		return $this->from !== NULL ? strtotime($this->from) : NULL;
 	}
 
 	/**
@@ -153,10 +153,10 @@ class Query {
 	}
 
 	/**
-	 * @return NULL|string
+	 * @return integer|NULL
 	 */
 	public function getTo() {
-		return $this->to;
+		return $this->to !== NULL ? strtotime($this->to) : NULL;
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Query {
 			'&count=' . $this->getCount() .
 			'&from=' . $this->getFrom() .
 			'&to=' . $this->getTo() .
-			'&value=' . $this->getValue() .
+			'&value=' . urlencode($this->getValue()) .
 			'&token=' . $this->getToken()
 		;
 	}
