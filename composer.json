@@ -1,0 +1,14 @@
+{
+    "name": "namelesscoder/numerolog",
+    "require": {
+        "ext-pdo_sqlite": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NamelessCoder\\Numerolog\\": "src/"
+        }
+    },
+    "bin": [
+        "bin/numerolog"
+    ]
+}

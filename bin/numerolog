@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+define('NUMEROLOG_HOME', rtrim(realpath(__DIR__ . '/../')) . '/');
+define('NUMEROLOG_DATABASE_BASEDIR', NUMEROLOG_HOME . 'data/');
+
+require_once NUMEROLOG_HOME . 'vendor/autoload.php';
+
+$composerFile = NUMEROLOG_HOME . 'composer.json';
+if (!file_exists($composerFile)) {
+	echo 'Error! Numerolog only functions inside projects with a composer.json file (containing a "name")' . PHP_EOL;
+	exit(1);
+}
+
+$composer = json_decode(file_get_contents($composerFile), JSON_OBJECT_AS_ARRAY);
+$client = new \NamelessCoder\Numerolog\Client();
+$parameters = array_slice($argv, 1);
+$query = new \NamelessCoder\Numerolog\Query($parameters);
+echo $client->query($query) . PHP_EOL;
