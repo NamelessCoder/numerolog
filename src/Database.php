@@ -6,6 +6,18 @@ namespace NamelessCoder\Numerolog;
  */
 class Database {
 
+	const DEFAULT_COUNT = 1024;
+
+	const QUERY_COUNTER_TABLE = 'CREATE TABLE IF NOT EXISTS %s (time REAL, value REAL)';
+	const QUERY_COUNTER_CHECK = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '%s'";
+	const QUERY_COUNTER_SAVE = "INSERT INTO '%s' (time, value) VALUES (%d, %d)";
+	const QUERY_COUNTER_SELECT_BY_COUNT = 'SELECT time, value FROM %s ORDER BY time DESC LIMIT %d';
+	const QUERY_COUNTER_SELECT_BY_RANGE = 'SELECT time, value FROM %s WHERE time >= %d AND time <= %d ORDER BY time DESC LIMIT %d';
+
+	const QUERY_TOKEN_TABLE = 'CREATE TABLE IF NOT EXISTS tokens (package STRING, token STRING)';
+	const QUERY_TOKEN_CREATE = "INSERT INTO tokens (package, token) VALUES ('%s', '%s')";
+	const QUERY_TOKEN_VALIDATE = "SELECT 1 FROM tokens WHERE package = '%s' AND token = '%s'";
+
 	/**
 	 * @param string $packageName
 	 */
@@ -36,9 +48,15 @@ class Database {
 		$to = $query->getTo();
 		$count = $query->getCount();
 		$action = $query->getAction();
+		$token = $query->getToken();
 		$result = NULL;
+		$databaseFilename = $this->getDatabaseFileName($packageName);
 		switch ($action) {
 			case Query::ACTION_GET:
+				if (!file_exists($databaseFilename)) {
+					throw new NotFoundException(sprintf('Package %s has no counters. Save a value to initialize!', $packageName));
+				}
+				$this->validatePackageToken($packageName, $token);
 				if ($from && $count) {
 					$result = $this->getByRange($packageName, $counterName, $from, $to, $count);
 				} elseif ($from) {
@@ -50,7 +68,13 @@ class Database {
 				}
 				break;
 			case Query::ACTION_SAVE:
+				if (!file_exists($databaseFilename)) {
+					$token = $this->createTokenForPackage($packageName, $token);
+				} else {
+					$this->validatePackageToken($packageName, $token);
+				}
 				$result = $this->saveValue($packageName, $counterName, $query->getValue());
+				$result['token'] = $token;
 				break;
 			default:
 				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));
@@ -60,7 +84,8 @@ class Database {
 		} else {
 			return array(
 				'values' => $result,
-				'statistics' => $this->getCalculator()->statistics($result)
+				'statistics' => $this->getCalculator()->statistics($result),
+				'token' => $token
 			);
 		}
 	}
@@ -73,10 +98,13 @@ class Database {
 	 */
 	public function saveValue($packageName, $counterName, $value) {
 		$connection = $this->getDatabaseConnection($packageName);
-		$connection->exec('CREATE TABLE IF NOT EXISTS ' . $counterName . ' (time REAL, value REAL)');
+		if (!$connection->query(sprintf(static::QUERY_COUNTER_CHECK, $counterName))->fetchArray()) {
+			#$token = $this->createTokenForCounter
+		}
+		$connection->exec(sprintf(static::QUERY_COUNTER_TABLE, $counterName));
 		$previous = $this->getLastValue($packageName, $counterName);
 		$value = $this->getCalculator()->modify($previous, $value);
-		$connection->exec('INSERT INTO ' . $counterName . ' (time, value) VALUES (' . microtime(TRUE) . ', ' . $value . ')');
+		$connection->exec(sprintf(static::QUERY_COUNTER_SAVE, $counterName, microtime(TRUE), $value));
 		return array('value' => $value, 'last' => $previous);
 	}
 
@@ -98,7 +126,7 @@ class Database {
 	 */
 	protected function getByCount($packageName, $counterName, $count) {
 		$connection = $this->getDatabaseConnection($packageName);
-		$result = $connection->query('SELECT time, value FROM ' . $counterName . ' ORDER BY time DESC LIMIT ' . (string) $count);
+		$result = $connection->query(sprintf(static::QUERY_COUNTER_SELECT_BY_COUNT, $counterName, (string) $count));
 		return $result ? $this->convertResultToArray($result) : NULL;
 	}
 
@@ -110,15 +138,40 @@ class Database {
 	 * @param integer $count Maximum number of results to return
 	 * @return array|NULL
 	 */
-	protected function getByRange($packageName, $counterName, $from, $to = NULL, $count = 1024) {
+	protected function getByRange($packageName, $counterName, $from, $to = NULL, $count = self::DEFAULT_COUNT) {
 		if (!$to) {
 			$to = microtime(TRUE);
 		}
 		$connection = $this->getDatabaseConnection($packageName);
-		$result = $connection->query('SELECT time, value FROM ' . $counterName .
-			' WHERE time >= ' . $from . ' AND time <= ' . $to .
-			' ORDER BY time DESC LIMIT ' . $count);
+		$result = $connection->query(sprintf(static::QUERY_COUNTER_SELECT_BY_RANGE, $counterName, $from, $to, $count));
 		return $result ? $this->convertResultToArray($result) : NULL;
+	}
+
+	/**
+	 * @param string $package
+	 * @param string $token
+	 * @return void
+	 */
+	protected function validatePackageToken($package, $token) {
+		$connection = $this->getTokenDatabaseConnection();
+		if (!$connection->query(sprintf(static::QUERY_TOKEN_VALIDATE, $package, $token))->fetchArray()) {
+			throw new AccessException(sprintf('The provided token (%s) is not permitted to access package %s', $token, $package));
+		}
+	}
+
+	/**
+	 * @param string $package
+	 * @param string $desiredToken
+	 * @return string
+	 */
+	protected function createTokenForPackage($package, $desiredToken = NULL) {
+		if (!$desiredToken) {
+			$desiredToken = bin2hex(openssl_random_pseudo_bytes(16));
+		}
+		$connection = $this->getTokenDatabaseConnection();
+		$connection->exec(static::QUERY_TOKEN_TABLE);
+		$connection->exec(sprintf(static::QUERY_TOKEN_CREATE, $package, $desiredToken));
+		return $desiredToken;
 	}
 
 	/**
@@ -134,10 +187,11 @@ class Database {
 	}
 
 	/**
+	 * @param string $packageName
 	 * @return string
 	 */
-	protected function getDatabaseFileBasePath() {
-		return NUMEROLOG_DATABASE_BASEDIR;
+	protected function getTokenDatabaseFileName() {
+		return $this->getDatabaseFileBasePath() . 'tokens.sqlite';
 	}
 
 	/**
@@ -149,6 +203,13 @@ class Database {
 	}
 
 	/**
+	 * @return \SQLite3
+	 */
+	protected function getTokenDatabaseConnection() {
+		return new \SQLite3($this->getTokenDatabaseFileName());
+	}
+
+	/**
 	 * @param string $packageName
 	 * @return \SQLite3
 	 */
@@ -157,7 +218,16 @@ class Database {
 	}
 
 	/**
+	 * @return string
+	 * @codeCoverageIgnore
+	 */
+	protected function getDatabaseFileBasePath() {
+		return NUMEROLOG_DATABASE_BASEDIR;
+	}
+
+	/**
 	 * @return Calculator
+	 * @codeCoverageIgnore
 	 */
 	protected function getCalculator() {
 		return new Calculator();

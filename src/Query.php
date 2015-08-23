@@ -45,6 +45,11 @@ class Query {
 	protected $count;
 
 	/**
+	 * @var string|NULL
+	 */
+	protected $token;
+
+	/**
 	 * @param array $parameters
 	 */
 	public function __construct(array $parameters = array()) {
@@ -180,13 +185,29 @@ class Query {
 	/**
 	 * @return string
 	 */
+	public function getToken() {
+		return $this->token;
+	}
+
+	/**
+	 * @param string $token
+	 * @return void
+	 */
+	public function setToken($token) {
+		$this->token = $token;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function toQueryString() {
 		return 'package=' . $this->getPackage() .
 			'&counter=' . $this->getCounter() .
 			'&count=' . $this->getCount() .
 			'&from=' . $this->getFrom() .
 			'&to=' . $this->getTo() .
-			'&value=' . $this->getValue()
+			'&value=' . $this->getValue() .
+			'&token=' . $this->getToken()
 		;
 	}
 
