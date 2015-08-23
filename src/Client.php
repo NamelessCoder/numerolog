@@ -22,6 +22,7 @@ class Client {
 	 */
 	public function get($packageName, $counterName, $count = 1) {
 		$query = new Query();
+		$query->setAction(Query::ACTION_GET);
 		$query->setPackage($packageName);
 		$query->setCounter($counterName);
 		$query->setCount($count);
@@ -38,6 +39,7 @@ class Client {
 	 */
 	public function range($packageName, $counterName, $from, $to = NULL, $count = 1024) {
 		$query = new Query();
+		$query->setAction(Query::ACTION_GET);
 		$query->setPackage($packageName);
 		$query->setCounter($counterName);
 		$query->setCount($count);
@@ -54,6 +56,7 @@ class Client {
 	 */
 	public function save($packageName, $counterName, $value) {
 		$query = new Query();
+		$query->setAction(Query::ACTION_SAVE);
 		$query->setPackage($packageName);
 		$query->setCounter($counterName);
 		$query->setValue($value);

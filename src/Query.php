@@ -203,6 +203,7 @@ class Query {
 	public function toQueryString() {
 		return 'package=' . $this->getPackage() .
 			'&counter=' . $this->getCounter() .
+			'&action=' . $this->getAction() .
 			'&count=' . $this->getCount() .
 			'&from=' . $this->getFrom() .
 			'&to=' . $this->getTo() .
