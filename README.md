@@ -1,6 +1,8 @@
 Numero-log
 ==========
 
+[![Build Status](https://img.shields.io/travis/NamelessCoder/numerolog.svg?style=flat-square&label=package)](https://travis-ci.org/NamelessCoder/numerolog) [![Coverage Status](https://img.shields.io/coveralls/NamelessCoder/numerolog/master.svg?style=flat-square)](https://coveralls.io/r/NamelessCoder/numerolog)
+
 **Numero-log** is a simple client/server application written in PHP which collects
 arbitrary numerical data about a named resource (package, for example), stores it
 and performs calculations when data is requested.
@@ -124,8 +126,6 @@ commands that should immediately make sense to you:
 ./vendor/bin/numerolog get --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --from 2015-01-01
-    
-    
 ```
 
 Note that the `--package myvendor/mypackage` argument can be left out as long as your
