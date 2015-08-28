@@ -11,14 +11,14 @@ class Client {
 	 * @return string
 	 */
 	public function query(Query $query) {
-		return file_get_contents($this->getEndpointUrl() . $query->toQueryString());
+		return json_decode(file_get_contents($this->getEndpointUrl() . $query->toQueryString()), JSON_OBJECT_AS_ARRAY);
 	}
 
 	/**
 	 * @param string $packageName
 	 * @param string $counterName
 	 * @param integer $count
-	 * @return string
+	 * @return array
 	 */
 	public function get($packageName, $counterName, $count = 1) {
 		$query = new Query();
@@ -35,7 +35,7 @@ class Client {
 	 * @param string $from
 	 * @param string $to
 	 * @param integer $count
-	 * @return string
+	 * @return array
 	 */
 	public function range($packageName, $counterName, $from, $to = NULL, $count = 1024) {
 		$query = new Query();
@@ -57,6 +57,21 @@ class Client {
 	public function save($packageName, $counterName, $value) {
 		$query = new Query();
 		$query->setAction(Query::ACTION_SAVE);
+		$query->setPackage($packageName);
+		$query->setCounter($counterName);
+		$query->setValue($value);
+		return $this->query($query);
+	}
+
+	/**
+	 * @param string $packageName
+	 * @param string $counterName
+	 * @param float $value
+	 * @return string
+	 */
+	public function compare($packageName, $counterName, $value) {
+		$query = new Query();
+		$query->setAction(Query::ACTION_COMPARE);
 		$query->setPackage($packageName);
 		$query->setCounter($counterName);
 		$query->setValue($value);

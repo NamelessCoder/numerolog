@@ -51,11 +51,17 @@ class Database {
 		$token = $query->getToken();
 		$result = NULL;
 		$databaseFilename = $this->getDatabaseFileName($packageName);
+		if (!file_exists($databaseFilename) && $action !== Query::ACTION_SAVE) {
+			throw new NotFoundException(sprintf('Package %s has no counters. Save a value to initialize!', $packageName));
+		}
 		switch ($action) {
+			case Query::ACTION_COMPARE:
+				$result = array(
+					$this->getLastValue($packageName, $counterName),
+					$query->getValue()
+				);
+				break;
 			case Query::ACTION_GET:
-				if (!file_exists($databaseFilename)) {
-					throw new NotFoundException(sprintf('Package %s has no counters. Save a value to initialize!', $packageName));
-				}
 				$this->validatePackageToken($packageName, $token);
 				if ($from && $count) {
 					$result = $this->getByRange($packageName, $counterName, $from, $to, $count);
@@ -74,7 +80,6 @@ class Database {
 					$this->validatePackageToken($packageName, $token);
 				}
 				$result = $this->saveValue($packageName, $counterName, $query->getValue());
-				$result['token'] = $token;
 				break;
 			default:
 				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));

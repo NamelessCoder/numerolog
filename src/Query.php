@@ -8,6 +8,7 @@ class Query {
 
 	const ACTION_SAVE = 'save';
 	const ACTION_GET = 'get';
+	const ACTION_COMPARE = 'compare';
 
 	/**
 	 * @var string

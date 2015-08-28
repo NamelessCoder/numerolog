@@ -16,4 +16,4 @@ $composer = json_decode(file_get_contents($composerFile), JSON_OBJECT_AS_ARRAY);
 $client = new \NamelessCoder\Numerolog\Client();
 $parameters = array_slice($argv, 1);
 $query = new \NamelessCoder\Numerolog\Query($parameters);
-echo $client->query($query) . PHP_EOL;
+echo json_encode($client->query($query)) . PHP_EOL;
