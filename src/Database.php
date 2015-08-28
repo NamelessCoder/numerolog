@@ -57,8 +57,14 @@ class Database {
 		switch ($action) {
 			case Query::ACTION_COMPARE:
 				$result = array(
-					$this->getLastValue($packageName, $counterName),
-					$query->getValue()
+					array(
+						'value' => $this->getLastValue($packageName, $counterName),
+						'time' => $this->getLastTimestamp($packageName, $counterName)
+					),
+					array(
+						'value' => $query->getValue(),
+						'time' => time()
+					)
 				);
 				break;
 			case Query::ACTION_GET:
@@ -102,9 +108,6 @@ class Database {
 	 */
 	public function saveValue($packageName, $counterName, $value) {
 		$connection = $this->getDatabaseConnection($packageName);
-		if (!$connection->query(sprintf(static::QUERY_COUNTER_CHECK, $counterName))->fetchArray()) {
-			#$token = $this->createTokenForCounter
-		}
 		$connection->exec(sprintf(static::QUERY_COUNTER_TABLE, $counterName));
 		$previous = $this->getLastValue($packageName, $counterName);
 		$value = $this->getCalculator()->modify($previous, $value);
@@ -120,6 +123,16 @@ class Database {
 	protected function getLastValue($packageName, $counterName) {
 		$values = $this->getByCount($packageName, $counterName, 1);
 		return empty($values) ? 0 : $values[0]['value'];
+	}
+
+	/**
+	 * @param string $packageName
+	 * @param string $counterName
+	 * @return float
+	 */
+	protected function getLastTimestamp($packageName, $counterName) {
+		$values = $this->getByCount($packageName, $counterName, 1);
+		return empty($values) ? 0 : $values[0]['time'];
 	}
 
 	/**
