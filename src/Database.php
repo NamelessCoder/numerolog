@@ -98,7 +98,7 @@ class Database {
 		if (1 < count($result)) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
-		$response['querytime'] = round(((microtime(TRUE) - $time) / 1000), 3);
+		$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);
 		return $response;
 	}
 
