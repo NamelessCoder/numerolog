@@ -42,6 +42,7 @@ class Database {
 	 * @return mixed
 	 */
 	public function query(Query $query) {
+		$time = microtime(TRUE);
 		$packageName = $query->getPackage();
 		$counterName = $query->getCounter();
 		$from = $query->getFrom();
@@ -97,6 +98,7 @@ class Database {
 		if (1 < count($result)) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
+		$response['querytime'] = round(((microtime(TRUE) - $time) / 1000), 3);
 		return $response;
 	}
 
