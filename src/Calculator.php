@@ -38,7 +38,7 @@ class Calculator {
 			'max' => 0
 		);
 		foreach ($values as $set) {
-			$value = $set['value'];
+			$value = (float) $set['value'];
 			$data['sum'] += $value;
 			if ($data['min'] === NULL || $value < $data['min']) {
 				$data['min'] = $value;
