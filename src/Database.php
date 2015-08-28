@@ -84,15 +84,14 @@ class Database {
 			default:
 				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));
 		}
-		if ((integer) $count === 1 || (integer) $count === 0) {
-			return $result;
-		} else {
-			return array(
-				'values' => $result,
-				'statistics' => $this->getCalculator()->statistics($result),
-				'token' => $token
-			);
+		$response = array(
+			'values' => $result,
+			'token' => $token
+		);
+		if (1 < count($result)) {
+			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
+		return $response;
 	}
 
 	/**
