@@ -47,8 +47,8 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 			'counter' => array('counter', 'foobar-counter'),
 			'value' => array('value', 123),
 			'action' => array('action', 'foobar-action'),
-			'from' => array('from', '2015-01-01', 1420066800),
-			'to' => array('to', '2015-01-02', 1420153200),
+			'from' => array('from', '2015-01-01 UTC', 1420070400),
+			'to' => array('to', '2015-01-02 UTC', 1420156800),
 			'count' => array('count', 654),
 			'token' => array('token', 'foobar-token')
 		);
@@ -128,14 +128,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 				'counter' => 'foobar-counter',
 				'value' => 123,
 				'action' => 'foobar-action',
-				'from' => '2015-01-01',
-				'to' => '2015-01-02',
+				'from' => '2015-01-01 UTC',
+				'to' => '2015-01-02 UTC',
 				'count' => 321,
 				'token' => 'foobar-token'
 			)
 		);
 		$this->assertEquals(
-			'package=foobar-package&counter=foobar-counter&action=foobar-action&count=321&from=1420066800&to=1420153200' .
+			'package=foobar-package&counter=foobar-counter&action=foobar-action&count=321&from=1420070400&to=1420156800' .
 			'&value=123&token=foobar-token',
 			$query->toQueryString()
 		);
