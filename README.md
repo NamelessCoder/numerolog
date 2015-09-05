@@ -141,7 +141,18 @@ commands that should immediately make sense to you:
 ./vendor/bin/numerolog --action get --package myvendor/mypackage \
     --token 1234567890abcdefg1234567890abcdefg
     --counter temperature --from 2015-01-01
+
+# poll a the maximum recorded temporature over last 30 recoded values
+./vendor/bin/numerolog --action poll --package myvendor/mypackage \
+    --token 1234567890abcdefg1234567890abcdefg
+    --counter temperature --poll max --count 30
 ```
+
+The `get` and `poll` commands are very similar in nature and support the same limit
+and range arguments, but differ in that `poll` only returns a specific value from
+the set, for example one of the statistics counters as in this example. Names that
+can be used for `--poll` are the indexes from the root array and indexes of the
+`statitics` array. E.g. `max`, `average`, `sum`, `values` or all of `statistics`.
 
 Note that the `--package myvendor/mypackage` argument can be left out as long as your
 project folder's composer.json file has a `name`. **Numero-log** will then use this

@@ -32,6 +32,27 @@ class Client {
 	/**
 	 * @param string $packageName
 	 * @param string $counterName
+	 * @param string $poll
+	 * @param string|NULL $from
+	 * @param string|NULL $to
+	 * @param integer $count
+	 * @return array
+	 */
+	public function poll($packageName, $counterName, $poll, $from = NULL, $to = NULL, $count = 1024) {
+		$query = new Query();
+		$query->setAction(Query::ACTION_POLL);
+		$query->setPackage($packageName);
+		$query->setCounter($counterName);
+		$query->setCount($count);
+		$query->setFrom($from);
+		$query->setTo($to);
+		$query->setPoll($poll);
+		return $this->query($query);
+	}
+
+	/**
+	 * @param string $packageName
+	 * @param string $counterName
 	 * @param string $from
 	 * @param string $to
 	 * @param integer $count

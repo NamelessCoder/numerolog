@@ -68,6 +68,7 @@ class Database {
 					)
 				);
 				break;
+			case Query::ACTION_POLL:
 			case Query::ACTION_GET:
 				$this->validatePackageToken($packageName, $token);
 				if ($from && $count) {
@@ -98,7 +99,21 @@ class Database {
 		if (1 < count($result) && $action !== Query::ACTION_SAVE) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
-		$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);
+		if ($action === Query::ACTION_POLL) {
+			// return only the indicated sub-set of statistics
+			$poll = $query->getPoll();
+			if (empty($poll)) {
+				throw new \RuntimeException('Poll command used with empty poll argument');
+			} elseif (isset($response[$poll])) {
+				$response = $response[$poll];
+			} elseif (isset($response['statistics'][$poll])) {
+				$response = $response['statistics'][$poll];
+			} else {
+				throw new \RuntimeException(sprintf('Invalid polling data requested: %s', $poll));
+			}
+		} else {
+			$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);
+		}
 		return $response;
 	}
 

@@ -49,6 +49,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 			'action' => array('action', 'foobar-action'),
 			'from' => array('from', '2015-01-01 UTC', 1420070400),
 			'to' => array('to', '2015-01-02 UTC', 1420156800),
+			'poll' => array('poll', 'foobar-poll'),
 			'count' => array('count', 654),
 			'token' => array('token', 'foobar-token')
 		);
@@ -79,6 +80,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 					'action' => 'foobar-action',
 					'from' => '2015-01-01',
 					'to' => '2015-01-02',
+					'poll' => 'foobar-poll',
 					'count' => 321,
 					'token' => 'foobar-token'
 				),
@@ -89,6 +91,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 					'action' => 'foobar-action',
 					'from' => '2015-01-01',
 					'to' => '2015-01-02',
+					'poll' => 'foobar-poll',
 					'count' => 321,
 					'token' => 'foobar-token'
 				)
@@ -101,6 +104,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 					'--action', 'foobar-action',
 					'--from', '2015-01-01',
 					'--to', '2015-01-02',
+					'--poll', 'foobar-poll',
 					'--count', 321,
 					'--token', 'foobar-token'
 				),
@@ -111,6 +115,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 					'action' => 'foobar-action',
 					'from' => '2015-01-01',
 					'to' => '2015-01-02',
+					'poll' => 'foobar-poll',
 					'count' => 321,
 					'token' => 'foobar-token'
 				)
@@ -130,13 +135,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
 				'action' => 'foobar-action',
 				'from' => '2015-01-01 UTC',
 				'to' => '2015-01-02 UTC',
+				'poll' => 'foobar-poll',
 				'count' => 321,
 				'token' => 'foobar-token'
 			)
 		);
 		$this->assertEquals(
 			'package=foobar-package&counter=foobar-counter&action=foobar-action&count=321&from=1420070400&to=1420156800' .
-			'&value=123&token=foobar-token',
+			'&poll=foobar-poll&value=123&token=foobar-token',
 			$query->toQueryString()
 		);
 	}

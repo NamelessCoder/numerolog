@@ -8,6 +8,7 @@ class Query {
 
 	const ACTION_SAVE = 'save';
 	const ACTION_GET = 'get';
+	const ACTION_POLL = 'poll';
 	const ACTION_COMPARE = 'compare';
 
 	/**
@@ -44,6 +45,11 @@ class Query {
 	 * @var integer|NULL
 	 */
 	protected $count;
+
+	/**
+	 * @var string|NULL
+	 */
+	protected $poll;
 
 	/**
 	 * @var string|NULL
@@ -184,6 +190,21 @@ class Query {
 	}
 
 	/**
+	 * @return string|NULL
+	 */
+	public function getPoll() {
+		return $this->poll;
+	}
+
+	/**
+	 * @param string|NULL $poll
+	 * @return void
+	 */
+	public function setPoll($poll) {
+		$this->poll = $poll;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getToken() {
@@ -208,6 +229,7 @@ class Query {
 			'&count=' . $this->getCount() .
 			'&from=' . $this->getFrom() .
 			'&to=' . $this->getTo() .
+			'&poll=' . $this->getPoll() .
 			'&value=' . urlencode($this->getValue()) .
 			'&token=' . $this->getToken()
 		;
