@@ -176,6 +176,66 @@ $client->getRange($package, $counter, $from, $to = NULL);
 $client->save($package, $counter, 3.14);
 ```
 
+Usage with monitoring and systems like Cacti
+--------------------------------------------
+
+**Numero-log** contains an easy to use method of polling individual parameters of
+a `get` response - which means that rather than have to parse JSON to know a certain
+value, you can simply request that value. And this means that the `poll` command is
+ideal for collecting a single value and logging the value or performing some action.
+For example, you might want to perform some action if the average temperature reaches
+a certain point, a small executable script with an exit code might do well:
+
+```bash
+#!/usr/bin/env bash
+
+# Variable $TEMPERATURE30 will contain a single numerical value which we can check:
+TEMPERATURE30=`./vendor/bin/numerolog --action poll --package myvendor/mypackage \
+                 --token 1234567890abcdefg1234567890abcdefg
+                 --counter temperature --poll average --count 30`
+
+# The value is the average measured across the last 30 recorded values.
+
+if [[ $TEMPERATURE30 -gt 40 ]]; then
+    echo "It's getting hot in here!"
+    echo "$TEMPERATURE30 degrees on average, hot!"
+    exit 1
+fi
+
+if [[ $TEMPERATURE30 -lt -10 ]]; then
+    echo "It's cold out there today!"
+    echo "$TEMPERATURE30 degrees on average, brrr!"
+    exit 2
+fi
+
+echo "Just right. A perfect $TEMPERATURE30"
+exit 0
+```
+
+Which means that you can execute the script and any values that are too high or
+too low cause a unique error code. If the temperature is fine, script exists with
+success code. Note that for an actual monitoring of critical values you may find
+the `--poll min` or `--poll max` parameters more informative.
+
+Now, regarding monitoring systems like Cacti: such systems usually allow a value to
+be collected via a script. Running the `poll` command from **Numero-log** as script,
+and selecting the value to graph (for example, `average` over the last 30 values)
+will cause that monitoring system to grab the value that is output and use that in
+its own storages.
+
+*This means that you can use Numero-log to record values at any given intervals and
+from any place you desire, for example distributed build systems or monitoring
+stations, and make your "main" monitoring system pull in those values from a single
+place and only receive an average; smoothing out the polled values.*
+
+For example: **Numero-log** will allow you to record values at very low intervals,
+and from as many hosts as you desire, but Cacti usually requires either a one- or
+five- minute average polling frequency and in the default setup would have to poll
+each and every host. So, recording the very frequent measurements in **Numero-log**
+and reading the average means you're "pre-processing" the statistical data to make
+it a single, graph-friendly unit of measurement with fixed polling intervals (and
+as long term storage as you want).
+
 Security
 --------
 
