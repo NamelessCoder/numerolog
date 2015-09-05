@@ -59,18 +59,18 @@ class Database {
 		}
 		switch ($action) {
 			case Query::ACTION_COMPARE:
-				$history = $this->getByCount($packageName, $counterName, 2048);
+				$history = (array) $this->getByCount($packageName, $counterName, 2048);
 				$lastValue = $this->getLastValue($packageName, $counterName);
 				$result = array(
 					array(
 						'value' => $lastValue,
 						'time' => $this->getLastTimestamp($packageName, $counterName),
-						'deviation' => $this->getCalculator()->variance($history, $lastValue)
+						'deviation' => $this->getCalculator()->deviation($history, $lastValue)
 					),
 					array(
 						'value' => $value,
 						'time' => time(),
-						'deviation' => $this->getCalculator()->variance($history, $value)
+						'deviation' => $this->getCalculator()->deviation($history, $value)
 					)
 				);
 				break;

@@ -61,7 +61,7 @@ class Calculator {
 	 * @param float $value
 	 * @return float
 	 */
-	public function variance(array $values, $value) {
+	public function deviation(array $values, $value) {
 		$statistics = $this->statistics($values);
 		return ($value - $statistics['mean']);
 	}
