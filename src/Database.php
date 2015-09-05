@@ -50,6 +50,7 @@ class Database {
 		$count = $query->getCount();
 		$action = $query->getAction();
 		$token = $query->getToken();
+		$tokenCreated = FALSE;
 		$result = NULL;
 		$databaseFilename = $this->getDatabaseFileName($packageName);
 		if (!file_exists($databaseFilename) && $action !== Query::ACTION_SAVE) {
@@ -84,6 +85,7 @@ class Database {
 			case Query::ACTION_SAVE:
 				if (!file_exists($databaseFilename)) {
 					$token = $this->createTokenForPackage($packageName, $token);
+					$tokenCreated = TRUE;
 				} else {
 					$this->validatePackageToken($packageName, $token);
 				}
@@ -93,8 +95,7 @@ class Database {
 				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));
 		}
 		$response = array(
-			'values' => $result,
-			'token' => $token
+			'values' => $result
 		);
 		if (1 < count($result) && $action !== Query::ACTION_SAVE) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
@@ -113,6 +114,9 @@ class Database {
 			}
 		} else {
 			$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);
+		}
+		if ($action === Query::ACTION_SAVE && $tokenCreated) {
+			$response['token'] = $token;
 		}
 		return $response;
 	}

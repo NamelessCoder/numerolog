@@ -32,14 +32,28 @@ if (!file_exists($composerFile)) {
 	exit(1);
 }
 
+// Initialize our key variables for processing the command
+$parameters = array_slice($argv, 1);
+$query = new \NamelessCoder\Numerolog\Query($parameters);
+$tokenSignature = sha1($query->getPackage());
+$tokenFile = NUMEROLOG_HOME . '.numerolog-token-' . $tokenSignature;
+$tokenFileExists = file_exists($tokenFile);
 $composer = json_decode(file_get_contents($composerFile), JSON_OBJECT_AS_ARRAY);
 $client = new \NamelessCoder\Numerolog\Client();
+
+// Make decisions about configuring client and query based on key variables
 if (isset($composer['extra']['mamelesscoder/numerolog']['host'])) {
 	$client->setEndPointUrl($composer['extra']['mamelesscoder/numerolog']['host']);
 }
-$parameters = array_slice($argv, 1);
-$query = new \NamelessCoder\Numerolog\Query($parameters);
 if (!$query->getPackage()) {
 	$query->setPackage($composer['name']);
 }
-echo json_encode($client->query($query)) . PHP_EOL;
+if (!$query->getToken() && $tokenFileExists) {
+	$query->setToken(trim(file_get_contents($tokenFile)));
+}
+$response = $client->query($query);
+if ($query->getAction() === \NamelessCoder\Numerolog\Query::ACTION_SAVE && !$query->getToken() && !$tokenFileExists) {
+	file_put_contents($tokenFile, $response['token']);
+}
+
+echo json_encode($response) . PHP_EOL;
