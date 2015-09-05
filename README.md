@@ -11,6 +11,11 @@ It consists of a tiny client and equally tiny server; the client is the main API
 through which you submit the collected numerical data - and the server is the API
 through which you request various renditions of numbers.
 
+Demonstration
+-------------
+
+![Demonstration](http://numerolog.namelesscoder.net/numerolog-demo.gif)
+
 Purpose
 -------
 
