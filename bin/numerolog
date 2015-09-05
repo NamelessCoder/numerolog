@@ -5,12 +5,21 @@ $paths = array(
 	__DIR__ . '/../',
 	__DIR__ . '/../../../../',
 );
-foreach ($paths as $path) {
+foreach ($paths as $index => $path) {
 	$path = rtrim(realpath($path)) . '/';
 	if (file_exists($path . 'vendor/autoload.php')) {
 		define('NUMEROLOG_HOME', $path);
 		break;
 	}
+	$paths[$index] = $path;
+}
+
+if (!defined('NUMEROLOG_HOME')) {
+	echo 'Error! Numerolog could not detect your vendor dir. Did you install using composer install?. We checked:' . PHP_EOL;
+	foreach ($paths as $path) {
+		echo ' * ' . $path . PHP_EOL;
+	}
+	exit(2);
 }
 
 define('NUMEROLOG_DATABASE_BASEDIR', NUMEROLOG_HOME . 'data/');
