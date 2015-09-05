@@ -11,10 +11,19 @@ It consists of a tiny client and equally tiny server; the client is the main API
 through which you submit the collected numerical data - and the server is the API
 through which you request various renditions of numbers.
 
+The output is ideal for, but not limited to, displaying in graphs that use JSON
+as data source (uses a two-axis array with time and value).
+
 Demonstration
 -------------
 
 ![Demonstration](http://numerolog.namelesscoder.net/numerolog-demo.gif)
+
+*The GIF demonstrates how to create a counter for a package using a custom token
+(happens in first save action) and recording additional values for the counter.
+It finishes off by showing how those values can then be retrieved with statistics.
+The collection of values happens locally - the storing and calculating of values
+happens on the default remote that is open and free to use (but can be changed).*
 
 Purpose
 -------
