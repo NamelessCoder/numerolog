@@ -95,7 +95,7 @@ class Database {
 			'values' => $result,
 			'token' => $token
 		);
-		if (1 < count($result)) {
+		if (1 < count($result) && $action !== Query::ACTION_SAVE) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
 		$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);
