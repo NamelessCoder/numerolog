@@ -7,6 +7,11 @@ namespace NamelessCoder\Numerolog;
 class Client {
 
 	/**
+	 * @var string
+	 */
+	protected $endPointUrl = 'http://numerolog.namelesscoder.net/index.php?';
+
+	/**
 	 * @param Query $query
 	 * @return string
 	 */
@@ -102,8 +107,16 @@ class Client {
 	/**
 	 * @return string
 	 */
-	protected function getEndpointUrl() {
-		return 'http://numerolog.namelesscoder.net/index.php?';
+	public function getEndPointUrl() {
+		return $this->endPointUrl;
+	}
+
+	/**
+	 * @param string $endPointUrl
+	 * @return void
+	 */
+	public function setEndPointUrl($endPointUrl) {
+		$this->endPointUrl = $endPointUrl;
 	}
 
 }

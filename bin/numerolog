@@ -34,6 +34,12 @@ if (!file_exists($composerFile)) {
 
 $composer = json_decode(file_get_contents($composerFile), JSON_OBJECT_AS_ARRAY);
 $client = new \NamelessCoder\Numerolog\Client();
+if (isset($composer['extra']['mamelesscoder/numerolog']['host'])) {
+	$client->setEndPointUrl($composer['extra']['mamelesscoder/numerolog']['host']);
+}
 $parameters = array_slice($argv, 1);
 $query = new \NamelessCoder\Numerolog\Query($parameters);
+if (!$query->getPackage()) {
+	$query->setPackage($composer['name']);
+}
 echo json_encode($client->query($query)) . PHP_EOL;
