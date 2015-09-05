@@ -26,6 +26,13 @@ The collection of values happens locally - the storing and calculating of values
 happens on the default remote that is open and free to use (but can be changed).
 Note that `| json_pp` is used to "pipe" a compact format JSON to pretty print.*
 
+Companion packages
+------------------
+
+* [Numerolog Lavacharts](https://github.com/NamelessCoder/numerolog-lavacharts)
+  enables charting output of Numerolog counters; is publicly available on the
+  public Numerolog server. See project page for usage!
+
 Purpose
 -------
 
