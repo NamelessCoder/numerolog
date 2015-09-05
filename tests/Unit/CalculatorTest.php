@@ -58,7 +58,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testStatistics(array $values, array $expected) {
 		$calculator = new Calculator();
-		$this->assertEquals($expected, $calculator->statistics($values));
+		$this->assertEquals($expected, $calculator->statistics($values), 'Failed asserting expected statistics match');
 	}
 
 	/**
@@ -74,7 +74,14 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase {
 					array('value' => 4),
 					array('value' => 5)
 				),
-				array('min' => 1, 'max' => 5, 'sum' => 15, 'average' => 3, 'count' => 5)
+				array(
+					'min' => 1,
+					'max' => 5,
+					'sum' => 15,
+					'average' => 3,
+					'count' => 5,
+					'deviation' => 0.59460355750136051
+				)
 			),
 			array(
 				array(
@@ -84,7 +91,14 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase {
 					array('value' => 3.8),
 					array('value' => 0.5)
 				),
-				array('min' => 0.4, 'max' => 3.8, 'sum' => 8.3, 'average' => 1.66, 'count' => 5)
+				array(
+					'min' => 0.4,
+					'max' => 3.8,
+					'sum' => 8.3,
+					'average' => 1.6600000000000001,
+					'count' => 5,
+					'deviation' => '0.60474661715316347'
+				)
 			),
 
 		);

@@ -37,8 +37,10 @@ class Calculator {
 			'min' => NULL,
 			'max' => 0
 		);
-		foreach ($values as $set) {
-			$value = (float) $set['value'];
+		$set = array();
+		foreach ($values as $unit) {
+			$value = (float) $unit['value'];
+			$set[] = $value;
 			$data['sum'] += $value;
 			if ($data['min'] === NULL || $value < $data['min']) {
 				$data['min'] = $value;
@@ -50,7 +52,37 @@ class Calculator {
 		$results = count($values);
 		$data['average'] = $data['sum'] / $results;
 		$data['count'] = $results;
+		$data['deviation'] = $this->calculateStandardDeviationOfSet($set, $data['average']);
 		return $data;
+	}
+
+	/**
+	 * @param array $values
+	 * @param float $value
+	 * @return float
+	 */
+	public function variance(array $values, $value) {
+		$statistics = $this->statistics($values);
+		return ($value - $statistics['mean']);
+	}
+
+	/**
+	 * @param array $values
+	 * @param float $mean
+	 * @return float
+	 */
+	protected function calculateStandardDeviationOfSet(array $values, $mean) {
+		$deviation = 0;
+		// $deviations initalized -1 for Bessel's correction; sample standard deviation
+		$deviations = -1;
+		foreach ($values as $value) {
+			$valueDeviation = ($value - $mean);
+			if ($valueDeviation > 0) {
+				$deviation =+ sqrt($valueDeviation);
+			}
+			++ $deviations;
+		}
+		return sqrt($deviation / $deviations);
 	}
 
 }

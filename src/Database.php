@@ -50,6 +50,7 @@ class Database {
 		$count = $query->getCount();
 		$action = $query->getAction();
 		$token = $query->getToken();
+		$value = $query->getValue();
 		$tokenCreated = FALSE;
 		$result = NULL;
 		$databaseFilename = $this->getDatabaseFileName($packageName);
@@ -58,14 +59,18 @@ class Database {
 		}
 		switch ($action) {
 			case Query::ACTION_COMPARE:
+				$history = $this->getByCount($packageName, $counterName, 2048);
+				$lastValue = $this->getLastValue($packageName, $counterName);
 				$result = array(
 					array(
-						'value' => $this->getLastValue($packageName, $counterName),
-						'time' => $this->getLastTimestamp($packageName, $counterName)
+						'value' => $lastValue,
+						'time' => $this->getLastTimestamp($packageName, $counterName),
+						'deviation' => $this->getCalculator()->variance($history, $lastValue)
 					),
 					array(
-						'value' => $query->getValue(),
-						'time' => time()
+						'value' => $value,
+						'time' => time(),
+						'deviation' => $this->getCalculator()->variance($history, $value)
 					)
 				);
 				break;
@@ -89,7 +94,7 @@ class Database {
 				} else {
 					$this->validatePackageToken($packageName, $token);
 				}
-				$result = $this->saveValue($packageName, $counterName, $query->getValue());
+				$result = $this->saveValue($packageName, $counterName, $value);
 				break;
 			default:
 				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));
