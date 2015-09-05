@@ -1,7 +1,18 @@
 #!/usr/bin/env php
 <?php
 
-define('NUMEROLOG_HOME', rtrim(realpath(__DIR__ . '/../')) . '/');
+$paths = array(
+	__DIR__ . '/../',
+	__DIR__ . '/../../../../',
+);
+foreach ($paths as $path) {
+	$path = rtrim(realpath($path)) . '/';
+	if (file_exists($path . 'vendor/autoload.php')) {
+		define('NUMEROLOG_HOME', $path);
+		break;
+	}
+}
+
 define('NUMEROLOG_DATABASE_BASEDIR', NUMEROLOG_HOME . 'data/');
 
 require_once NUMEROLOG_HOME . 'vendor/autoload.php';
