@@ -53,7 +53,14 @@ if (!$query->getToken() && $tokenFileExists) {
 }
 $response = $client->query($query);
 if ($query->getAction() === \NamelessCoder\Numerolog\Query::ACTION_SAVE && !$query->getToken() && !$tokenFileExists) {
+	echo '!!! ATTENTION !!! ATTENTION !!! ATTENTION !!! ATTENTION !!! ATTENTION !!! ATTENTION !!!' . PHP_EOL;
+	echo '!!! A token was generated remotely. Make sure you save it NOW! It CANNOT be retrieved!' . PHP_EOL;
+	echo PHP_EOL;
+	echo '--> Token:        ' . $response['token'] . PHP_EOL;
+	echo '--> Token file:   ' . $tokenFile . PHP_EOL;
+	echo PHP_EOL;
+	echo '!!! Message will never be repeated!' . PHP_EOL;
 	file_put_contents($tokenFile, $response['token']);
+} else {
+	echo json_encode($response) . PHP_EOL;
 }
-
-echo json_encode($response) . PHP_EOL;
