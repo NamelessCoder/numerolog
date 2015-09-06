@@ -42,8 +42,8 @@ $composer = json_decode(file_get_contents($composerFile), JSON_OBJECT_AS_ARRAY);
 $client = new \NamelessCoder\Numerolog\Client();
 
 // Make decisions about configuring client and query based on key variables
-if (isset($composer['extra']['mamelesscoder/numerolog']['host'])) {
-	$client->setEndPointUrl($composer['extra']['mamelesscoder/numerolog']['host']);
+if (isset($composer['extra']['namelesscoder/numerolog']['host'])) {
+	$client->setEndPointUrl($composer['extra']['namelesscoder/numerolog']['host']);
 }
 if (!$query->getPackage()) {
 	$query->setPackage($composer['name']);

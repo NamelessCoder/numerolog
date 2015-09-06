@@ -97,7 +97,7 @@ In the composer file you can place this singular setting:
 {
     "name": "myvendor/mypackage",
     "extra": {
-        "mamelesscoder/numerolog": {
+        "namelesscoder/numerolog": {
             "host": "http://mydomain.com/"
         }
     }
