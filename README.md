@@ -32,6 +32,11 @@ Companion packages
 * [Numerolog Lavacharts](https://github.com/NamelessCoder/numerolog-lavacharts)
   enables charting output of Numerolog counters; is publicly available on the
   public Numerolog server. See project page for usage!
+* [Numerolog PHPUnit](https://github.com/NamelessCoder/numerolog-phpunit) enables
+  unit tests to make assertions based on statistical data while also collecting new
+  data. The result is a "learning" system that perpetually adjusts the expected
+  limits of chosen indicators (memory usage, file size, functions called, stack
+  depth etc).
 
 Purpose
 -------
