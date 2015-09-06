@@ -13,7 +13,6 @@ class Database {
 	const QUERY_COUNTER_SAVE = "INSERT INTO '%s' (time, value) VALUES (%d, %d)";
 	const QUERY_COUNTER_SELECT_BY_COUNT = 'SELECT time, value FROM %s ORDER BY time DESC LIMIT %d';
 	const QUERY_COUNTER_SELECT_BY_RANGE = 'SELECT time, value FROM %s WHERE time >= %d AND time <= %d ORDER BY time DESC LIMIT %d';
-	const QUERY_COUNTERS_SELECT = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'tokens'";
 
 	const QUERY_TOKEN_TABLE = 'CREATE TABLE IF NOT EXISTS tokens (package STRING, token STRING)';
 	const QUERY_TOKEN_CREATE = "INSERT INTO tokens (package, token) VALUES ('%s', '%s')";
@@ -239,15 +238,17 @@ class Database {
 	 * @return array
 	 */
 	protected function getCountersFromPackage($packageName) {
-		$connection = $this->getDatabaseConnection($packageName);
-		$tables = $connection->query(static::QUERY_COUNTERS_SELECT)->fetchArray();
+		$databaseFilePattern = $this->getDatabaseFileBasePath() . $packageName . '*.sqlite';
+		$files = glob($databaseFilePattern);
 		$results = array();
-		foreach ($tables as $tableRecord) {
-			$counterName = $tableRecord['table'];
-			$results[$counterName] = array(
-				'lastUpdate' => $this->getLastTimestamp($packageName, $counterName),
-				'lastValue' => $this->getLastValue($packageName, $counterName)
-			);
+		if (!empty($files)) {
+			foreach ($files as $filePathAndFilename) {
+				$counterName = pathinfo($filePathAndFilename, PATHINFO_FILENAME);
+				$results[$counterName] = array(
+					'lastUpdate' => $this->getLastTimestamp($packageName, $counterName),
+					'lastValue' => $this->getLastValue($packageName, $counterName)
+				);
+			}
 		}
 		return $results;
 	}
