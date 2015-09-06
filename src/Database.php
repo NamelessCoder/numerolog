@@ -102,7 +102,7 @@ class Database {
 				$result = $this->saveValue($packageName, $counterName, $value);
 				break;
 			default:
-				throw new \RuntimeException(sprintf('Invalid Numerolog action: %s', $action));
+				throw new NumerologException(sprintf('Invalid Numerolog action: %s', $action));
 		}
 		$response = array(
 			'values' => $result
@@ -114,13 +114,13 @@ class Database {
 			// return only the indicated sub-set of statistics
 			$poll = $query->getPoll();
 			if (empty($poll)) {
-				throw new \RuntimeException('Poll command used with empty poll argument');
+				throw new NumerologException('Poll command used with empty poll argument');
 			} elseif (isset($response[$poll])) {
 				$response = $response[$poll];
 			} elseif (isset($response['statistics'][$poll])) {
 				$response = $response['statistics'][$poll];
 			} else {
-				throw new \RuntimeException(sprintf('Invalid polling data requested: %s', $poll));
+				throw new NumerologException(sprintf('Invalid polling data requested: %s', $poll));
 			}
 		} else {
 			$response['querytime'] = round(((microtime(TRUE) - $time) * 1000), 5);

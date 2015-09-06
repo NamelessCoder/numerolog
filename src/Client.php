@@ -35,7 +35,10 @@ class Client {
 		$body = file_get_contents($this->getEndpointUrl() . $query->toQueryString());
 		$decoded = json_decode($body, JSON_OBJECT_AS_ARRAY);
 		if (NULL === $decoded) {
-			throw new \RuntimeException($body);
+			throw new NumerologException($body);
+		}
+		if (!empty($decoded['error'])) {
+			throw new NumerologException($decoded['error']);
 		}
 		return $decoded;
 	}

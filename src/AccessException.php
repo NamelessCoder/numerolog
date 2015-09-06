@@ -4,6 +4,6 @@ namespace NamelessCoder\Numerolog;
 /**
  * Class AccessException
  */
-class AccessException extends \RuntimeException {
+class AccessException extends NumerologException {
 
 }
