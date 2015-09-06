@@ -16,7 +16,12 @@ class Client {
 	 * @return string
 	 */
 	public function query(Query $query) {
-		return json_decode(file_get_contents($this->getEndpointUrl() . $query->toQueryString()), JSON_OBJECT_AS_ARRAY);
+		$body = file_get_contents($this->getEndpointUrl() . $query->toQueryString());
+		$decoded = json_decode($body, JSON_OBJECT_AS_ARRAY);
+		if (NULL === $decoded) {
+			throw new \RuntimeException($body);
+		}
+		return $decoded;
 	}
 
 	/**
