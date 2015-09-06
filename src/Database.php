@@ -13,6 +13,7 @@ class Database {
 	const QUERY_COUNTER_SAVE = "INSERT INTO '%s' (time, value) VALUES (%d, %d)";
 	const QUERY_COUNTER_SELECT_BY_COUNT = 'SELECT time, value FROM %s ORDER BY time DESC LIMIT %d';
 	const QUERY_COUNTER_SELECT_BY_RANGE = 'SELECT time, value FROM %s WHERE time >= %d AND time <= %d ORDER BY time DESC LIMIT %d';
+	const QUERY_COUNTERS_SELECT = "SELECT name FROM sqlite_master WHERE type = 'table' AND name != 'tokens'";
 
 	const QUERY_TOKEN_TABLE = 'CREATE TABLE IF NOT EXISTS tokens (package STRING, token STRING)';
 	const QUERY_TOKEN_CREATE = "INSERT INTO tokens (package, token) VALUES ('%s', '%s')";
@@ -87,6 +88,10 @@ class Database {
 					$result = $this->getLastValue($packageName, $counterName);
 				}
 				break;
+			case Query::ACTION_COUNTERS:
+				$this->validatePackageToken($packageName, $token);
+				$result = $this->getCountersFromPackage($packageName);
+				break;
 			case Query::ACTION_SAVE:
 				if (!file_exists($databaseFilename)) {
 					$token = $this->createTokenForPackage($packageName, $token);
@@ -102,7 +107,7 @@ class Database {
 		$response = array(
 			'values' => $result
 		);
-		if (1 < count($result) && $action !== Query::ACTION_SAVE) {
+		if (1 < count($result) && $action !== Query::ACTION_SAVE && $action !== Query::ACTION_COUNTERS) {
 			$response['statistics'] = $this->getCalculator()->statistics($result);
 		}
 		if ($action === Query::ACTION_POLL) {
@@ -225,6 +230,24 @@ class Database {
 		$results = array();
 		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 			$results[] = $row;
+		}
+		return $results;
+	}
+
+	/**
+	 * @param string $packageName
+	 * @return array
+	 */
+	protected function getCountersFromPackage($packageName) {
+		$connection = $this->getDatabaseConnection($packageName);
+		$tables = $connection->query(static::QUERY_COUNTERS_SELECT)->fetchArray();
+		$results = array();
+		foreach ($tables as $tableRecord) {
+			$counterName = $tableRecord['table'];
+			$results[$counterName] = array(
+				'lastUpdate' => $this->getLastTimestamp($packageName, $counterName),
+				'lastValue' => $this->getLastValue($packageName, $counterName)
+			);
 		}
 		return $results;
 	}

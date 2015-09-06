@@ -10,6 +10,7 @@ class Query {
 	const ACTION_GET = 'get';
 	const ACTION_POLL = 'poll';
 	const ACTION_COMPARE = 'compare';
+	const ACTION_COUNTERS = 'counters';
 
 	/**
 	 * @var string
