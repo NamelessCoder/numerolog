@@ -12,10 +12,26 @@ class Client {
 	protected $endPointUrl = 'http://numerolog.namelesscoder.net/index.php?';
 
 	/**
+	 * @var string|NULL
+	 */
+	protected $package = NULL;
+
+	/**
+	 * @var string|NULL
+	 */
+	protected $token = NULL;
+
+	/**
 	 * @param Query $query
 	 * @return string
 	 */
 	public function query(Query $query) {
+		if (!$query->getPackage() && $this->package) {
+			$query->setPackage($this->getPackage());
+		}
+		if (!$query->getToken() && $this->token) {
+			$query->setToken($this->getToken());
+		}
 		$body = file_get_contents($this->getEndpointUrl() . $query->toQueryString());
 		$decoded = json_decode($body, JSON_OBJECT_AS_ARRAY);
 		if (NULL === $decoded) {
@@ -122,6 +138,36 @@ class Client {
 	 */
 	public function setEndPointUrl($endPointUrl) {
 		$this->endPointUrl = $endPointUrl;
+	}
+
+	/**
+	 * @return string|NULL
+	 */
+	public function getPackage() {
+		return $this->package;
+	}
+
+	/**
+	 * @param string|NULL $package
+	 * @return void
+	 */
+	public function setPackage($package) {
+		$this->package = $package;
+	}
+
+	/**
+	 * @return string|NULL
+	 */
+	public function getToken() {
+		return $this->token;
+	}
+
+	/**
+	 * @param string|NULL $token
+	 * @return void
+	 */
+	public function setToken($token) {
+		$this->token = $token;
 	}
 
 }
