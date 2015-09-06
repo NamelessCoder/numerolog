@@ -1,5 +1,6 @@
 {
     "name": "namelesscoder/numerolog",
+    "description": "Numerolog: Numeric statistics collection service",
     "require": {
         "ext-pdo_sqlite": "*"
     },
