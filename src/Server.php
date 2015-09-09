@@ -34,7 +34,9 @@ class Server {
 			$data = $database->query($query);
 		} catch (\RuntimeException $error) {
 			$data = array(
-				'error' => $error->getMessage()
+				'error' => $error->getMessage(),
+				'type' => get_class($error),
+				'code' => $error->getCode()
 			);
 		}
 		return $data;

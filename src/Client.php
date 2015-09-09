@@ -38,7 +38,8 @@ class Client {
 			throw new NumerologException($body);
 		}
 		if (!empty($decoded['error'])) {
-			throw new NumerologException($decoded['error']);
+			$exceptionClass = (isset($decoded['type']) ? $decoded['type'] : NumerologException::class);
+			throw new $exceptionClass($decoded['error'], $decoded['code']);
 		}
 		return $decoded;
 	}
