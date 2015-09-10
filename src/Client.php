@@ -38,7 +38,7 @@ class Client {
 			throw new NumerologException($body);
 		}
 		if (!empty($decoded['error'])) {
-			$exceptionClass = (isset($decoded['type']) ? $decoded['type'] : NumerologException::class);
+			$exceptionClass = (isset($decoded['type']) ? $decoded['type'] : 'NamelessCoder\\Numerolog\\NumerologException');
 			throw new $exceptionClass($decoded['error'], $decoded['code']);
 		}
 		return $decoded;
